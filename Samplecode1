@@ -1,0 +1,115 @@
+-- Create Database
+CREATE DATABASE PersonalInjuryLawFirm;
+USE PersonalInjuryLawFirm;
+
+
+
+-- Clients Table
+CREATE TABLE Clients (
+ClientID INT PRIMARY KEY AUTO_INCREMENT,
+FirstName VARCHAR(50),
+LastName VARCHAR(50),
+DOB DATE,
+Phone VARCHAR(15),
+Email VARCHAR(100),
+Address TEXT,
+CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+-- Attorneys Table
+CREATE TABLE Attorneys (
+AttorneyID INT PRIMARY KEY AUTO_INCREMENT,
+FirstName VARCHAR(50),
+LastName VARCHAR(50),
+BarNumber VARCHAR(20) UNIQUE,
+Phone VARCHAR(15),
+Email VARCHAR(100),
+Specialization VARCHAR(100),
+CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+-- Cases Table
+CREATE TABLE Cases (
+CaseID INT PRIMARY KEY AUTO_INCREMENT,
+ClientID INT,
+AttorneyID INT,
+CaseType VARCHAR(100),
+CaseStatus ENUM('Open', 'Closed', 'Settled', 'Dismissed'),
+DateFiled DATE,
+SettlementAmount DECIMAL(10,2),
+CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (ClientID) REFERENCES Clients(ClientID),
+FOREIGN KEY (AttorneyID) REFERENCES Attorneys(AttorneyID)
+);
+
+
+
+-- Medical Records Table
+CREATE TABLE MedicalRecords (
+RecordID INT PRIMARY KEY AUTO_INCREMENT,
+ClientID INT,
+CaseID INT,
+Diagnosis TEXT,
+Treatment TEXT,
+Hospital VARCHAR(255),
+Cost DECIMAL(10,2),
+CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (ClientID) REFERENCES Clients(ClientID),
+FOREIGN KEY (CaseID) REFERENCES Cases(CaseID)
+);
+
+
+
+-- Settlements Table
+CREATE TABLE Settlements (
+SettlementID INT PRIMARY KEY AUTO_INCREMENT,
+CaseID INT,
+SettlementDate DATE,
+Amount DECIMAL(10,2),
+PayoutDate DATE,
+Status ENUM('Pending', 'Paid', 'Rejected'),
+CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (CaseID) REFERENCES Cases(CaseID)
+);
+
+
+
+-- Sample Data Insertion
+
+
+
+-- Insert Clients
+INSERT INTO Clients (FirstName, LastName, DOB, Phone, Email, Address) VALUES
+('John', 'Doe', '1980-05-12', '123-456-7890', 'johndoe@example.com', '123 Main St, NY'),
+('Jane', 'Smith', '1992-08-22', '987-654-3210', 'janesmith@example.com', '456 Oak Ave, CA');
+
+
+
+-- Insert Attorneys
+INSERT INTO Attorneys (FirstName, LastName, BarNumber, Phone, Email, Specialization) VALUES
+('Michael', 'Brown', 'BAR12345', '111-222-3333', 'mbrown@lawfirm.com', 'Personal Injury'),
+('Sarah', 'Johnson', 'BAR67890', '444-555-6666', 'sjohnson@lawfirm.com', 'Medical Malpractice');
+
+
+
+-- Insert Cases
+INSERT INTO Cases (ClientID, AttorneyID, CaseType, CaseStatus, DateFiled, SettlementAmount) VALUES
+(1, 1, 'Car Accident', 'Open', '2024-01-15', NULL),
+(2, 2, 'Slip and Fall', 'Settled', '2023-11-10', 50000.00);
+
+
+
+-- Insert Medical Records
+INSERT INTO MedicalRecords (ClientID, CaseID, Diagnosis, Treatment, Hospital, Cost) VALUES
+(1, 1, 'Whiplash', 'Physical Therapy', 'City Hospital', 2000.00),
+(2, 2, 'Fractured Ankle', 'Surgery', 'County Medical Center', 15000.00);
+
+
+
+-- Insert Settlements
+INSERT INTO Settlements (CaseID, SettlementDate, Amount, PayoutDate, Status) VALUES
+(2, '2024-02-01', 50000.00, '2024-02-10', 'Paid');
